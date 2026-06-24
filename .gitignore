@@ -1,0 +1,67 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment & secrets (never commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials.json
+serviceAccountKey.json
+
+# Build output
+dist/
+build/
+frontend/dist/
+backend/dist/
+.cache/
+.parcel-cache/
+.vite/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime & OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Testing & coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Misc
+*.tsbuildinfo
+.eslintcache
+.turbo/
+tmp/
+temp/
+uploads/
