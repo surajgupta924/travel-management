@@ -4,13 +4,16 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const { protect, authorize } = require('../middleware/auth');
 const validate = require('../middleware/validate');
+const checkDB = require('../middleware/checkDB');
 
 router.post(
   '/register',
+  checkDB,
   [
     body('name').trim().notEmpty().withMessage('Name is required'),
-    body('email').isEmail().withMessage('Valid email is required'),
+    body('email').isEmail().withMessage('Please enter a valid email address'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('phone').optional().trim(),
   ],
   validate,
   authController.register
@@ -18,6 +21,7 @@ router.post(
 
 router.post(
   '/login',
+  checkDB,
   [
     body('email').isEmail().withMessage('Valid email is required'),
     body('password').notEmpty().withMessage('Password is required'),

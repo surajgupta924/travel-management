@@ -7,7 +7,7 @@ const PackageCard = ({ pkg }) => {
   return (
     <Link to={`/packages/${pkg._id}`} className="card package-card">
       <div className="card-image">
-        <img src={image} alt={pkg.title} />
+        <img src={image} alt={pkg.title} loading="lazy" />
         {pkg.isFeatured && <span className="featured-badge">Featured</span>}
         <span className="price-tag">${pkg.price}</span>
       </div>
@@ -18,7 +18,8 @@ const PackageCard = ({ pkg }) => {
           <span><FiClock /> {pkg.duration} days</span>
         </div>
         <div className="rating">
-          <FiStar /> {pkg.rating || 'New'} {pkg.reviewCount > 0 && `(${pkg.reviewCount} reviews)`}
+          <FiStar fill="currentColor" /> {pkg.rating || 'New'}
+          {pkg.reviewCount > 0 && <span style={{ color: 'var(--gray-500)', fontWeight: 500 }}>({pkg.reviewCount})</span>}
         </div>
       </div>
     </Link>

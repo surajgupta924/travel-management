@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import API from '../services/api';
+import { getErrorMessage } from '../utils/getErrorMessage';
 
 const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
@@ -14,7 +15,7 @@ const Contact = () => {
       toast.success('Your inquiry has been submitted!');
       setForm({ name: '', email: '', phone: '', subject: '', message: '' });
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Submission failed');
+      toast.error(getErrorMessage(err, 'Submission failed'));
     } finally {
       setSubmitting(false);
     }

@@ -23,10 +23,14 @@ exports.register = async (req, res) => {
 
     res.status(201).json({
       success: true,
+      message: 'Account created successfully',
       data: { user, token: generateToken(user._id) },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    if (error.code === 11000) {
+      return res.status(400).json({ success: false, message: 'Email already registered' });
+    }
+    res.status(500).json({ success: false, message: error.message || 'Registration failed' });
   }
 };
 

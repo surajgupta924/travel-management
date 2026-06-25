@@ -1,9 +1,10 @@
 import { FiInbox } from 'react-icons/fi';
 
-const EmptyState = ({ message = 'No data found' }) => (
+const EmptyState = ({ message = 'No data found', children }) => (
   <div className="empty-state">
-    <FiInbox />
+    <div className="empty-icon"><FiInbox /></div>
     <p>{message}</p>
+    {children}
   </div>
 );
 

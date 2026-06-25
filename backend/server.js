@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
 const destinationRoutes = require('./routes/destinationRoutes');
@@ -14,14 +15,16 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 
+connectDB();
+
 const allowedOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim())
-  : ['http://localhost:3000'];
+  : ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:3000'];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
@@ -33,13 +36,13 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected successfully'))
-  .catch((err) => console.error('MongoDB connection error:', err));
-
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'Travel & Tourism API is running' });
+  const dbConnected = mongoose.connection.readyState === 1;
+  res.status(dbConnected ? 200 : 503).json({
+    success: dbConnected,
+    message: dbConnected ? 'Travel & Tourism API is running' : 'API running but database disconnected',
+    database: dbConnected ? 'connected' : 'disconnected',
+  });
 });
 
 app.use('/api/auth', authRoutes);

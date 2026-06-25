@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FiClock, FiMapPin, FiStar, FiCheck, FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import API from '../services/api';
+import { getErrorMessage } from '../utils/getErrorMessage';
 import { useAuth } from '../context/AuthContext';
 import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
@@ -35,7 +36,7 @@ const PackageDetail = () => {
       toast.success(`Booking created! Reference: ${res.data.data.bookingReference}`);
       navigate('/bookings');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Booking failed');
+      toast.error(getErrorMessage(err, 'Booking failed'));
     } finally {
       setSubmitting(false);
     }

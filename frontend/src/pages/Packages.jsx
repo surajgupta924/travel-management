@@ -36,12 +36,15 @@ const Packages = () => {
   };
 
   return (
-    <div className="section">
-      <div className="container">
-        <div className="section-header">
-          <h2>Tour Packages</h2>
-          <p>Find your perfect adventure</p>
+    <div className="section" style={{ paddingTop: 0 }}>
+      <div className="page-hero">
+        <div className="container">
+          <span className="section-tag">Tours</span>
+          <h1>Tour Packages</h1>
+          <p>Find your perfect adventure from our curated collection</p>
         </div>
+      </div>
+      <div className="container section">
 
         <div className="filters">
           <input

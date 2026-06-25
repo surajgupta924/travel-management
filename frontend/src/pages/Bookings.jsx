@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import API from '../services/api';
+import { getErrorMessage } from '../utils/getErrorMessage';
 import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
 
@@ -24,7 +25,7 @@ const Bookings = () => {
       toast.success('Booking cancelled');
       fetchBookings();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Cancel failed');
+      toast.error(getErrorMessage(err, 'Cancel failed'));
     }
   };
 

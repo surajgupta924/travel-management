@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
@@ -24,6 +24,21 @@ import ManageBookings from './pages/dashboard/ManageBookings';
 import ManageUsers from './pages/dashboard/ManageUsers';
 import ManageInquiries from './pages/dashboard/ManageInquiries';
 
+const PublicLayout = ({ children }) => {
+  const location = useLocation();
+  const isAuthPage = ['/login', '/register'].includes(location.pathname);
+
+  if (isAuthPage) return children;
+
+  return (
+    <>
+      <Navbar />
+      {children}
+      <Footer />
+    </>
+  );
+};
+
 function App() {
   return (
     <AuthProvider>
@@ -45,8 +60,7 @@ function App() {
           </Route>
 
           <Route path="*" element={
-            <>
-              <Navbar />
+            <PublicLayout>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/packages" element={<Packages />} />
@@ -60,8 +74,7 @@ function App() {
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
               </Routes>
-              <Footer />
-            </>
+            </PublicLayout>
           } />
         </Routes>
       </BrowserRouter>
