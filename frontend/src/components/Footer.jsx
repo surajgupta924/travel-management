@@ -1,16 +1,28 @@
 import { Link } from 'react-router-dom';
-import { FiGlobe, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
+import { FiGlobe, FiMail, FiPhone, FiMapPin, FiInstagram, FiTwitter, FiFacebook } from 'react-icons/fi';
 
 const Footer = () => (
-  <footer className="footer">
+  <footer className="footer footer-large">
     <div className="container">
+      <div className="footer-top-cta">
+        <div>
+          <h3>Start Your Journey Today</h3>
+          <p>Join 10,000+ travelers who trust TravelEase for their adventures.</p>
+        </div>
+        <Link to="/register" className="btn btn-primary btn-lg">Create Free Account</Link>
+      </div>
       <div className="footer-grid">
         <div>
           <h3><FiGlobe style={{ display: 'inline', marginRight: 8 }} />TravelEase</h3>
-          <p>Your trusted partner for unforgettable travel experiences. Discover the world with our curated tour packages and expert guidance.</p>
+          <p>Your trusted partner for unforgettable travel experiences. Discover the world with our curated tour packages, luxury hotels, and expert guidance.</p>
+          <div className="social-links">
+            <a href="#" aria-label="Facebook"><FiFacebook /></a>
+            <a href="#" aria-label="Twitter"><FiTwitter /></a>
+            <a href="#" aria-label="Instagram"><FiInstagram /></a>
+          </div>
         </div>
         <div>
-          <h4>Quick Links</h4>
+          <h4>Explore</h4>
           <ul>
             <li><Link to="/packages">Tour Packages</Link></li>
             <li><Link to="/destinations">Destinations</Link></li>
