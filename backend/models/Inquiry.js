@@ -8,6 +8,11 @@ const inquirySchema = new mongoose.Schema(
     subject: { type: String, required: true },
     message: { type: String, required: true },
     tourPackage: { type: mongoose.Schema.Types.ObjectId, ref: 'TourPackage' },
+    inquiryType: {
+      type: String,
+      enum: ['general', 'visa', 'quote', 'callback', 'corporate'],
+      default: 'general',
+    },
     status: {
       type: String,
       enum: ['new', 'in_progress', 'resolved', 'closed'],

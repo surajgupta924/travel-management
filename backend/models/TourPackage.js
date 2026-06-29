@@ -19,8 +19,13 @@ const tourPackageSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['adventure', 'cultural', 'beach', 'wildlife', 'luxury', 'budget'],
+      enum: ['adventure', 'cultural', 'beach', 'wildlife', 'luxury', 'budget', 'honeymoon', 'pilgrimage'],
       default: 'cultural',
+    },
+    tourType: {
+      type: String,
+      enum: ['domestic', 'international'],
+      default: 'international',
     },
     itinerary: [
       {

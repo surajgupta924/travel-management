@@ -1,7 +1,8 @@
+import { Link } from 'react-router-dom';
 import { FiStar, FiMapPin } from 'react-icons/fi';
 
 const HotelCard = ({ hotel }) => (
-  <div className="card hotel-card">
+  <Link to={`/hotels/${hotel._id}`} className="card hotel-card">
     <div className="card-image hotel-card-image">
       <img src={hotel.image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'} alt={hotel.name} loading="lazy" />
       <span className="hotel-stars-badge">{'★'.repeat(hotel.starRating)}</span>
@@ -20,10 +21,10 @@ const HotelCard = ({ hotel }) => (
           <span className="hotel-price">${hotel.pricePerNight}</span>
           <span className="hotel-price-unit">/night</span>
         </div>
-        <span className="rooms-left">{hotel.availableRooms} rooms available</span>
+        <span className="rooms-left">{hotel.availableRooms} rooms</span>
       </div>
     </div>
-  </div>
+  </Link>
 );
 
 export default HotelCard;

@@ -4,12 +4,13 @@ const { paginate, paginatedResponse } = require('../utils/paginate');
 
 exports.getPackages = async (req, res) => {
   try {
-    const { destination, category, minPrice, maxPrice, featured, search, difficulty, sort } = req.query;
+    const { destination, category, minPrice, maxPrice, featured, search, difficulty, sort, tourType } = req.query;
     const { page, limit, skip } = paginate(req.query.page, req.query.limit);
     const filter = { isActive: true };
     if (destination) filter.destination = destination;
     if (category) filter.category = category;
     if (difficulty) filter.difficulty = difficulty;
+    if (tourType) filter.tourType = tourType;
     if (featured === 'true') filter.isFeatured = true;
     if (minPrice || maxPrice) {
       filter.price = {};

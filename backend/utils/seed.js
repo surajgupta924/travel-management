@@ -6,6 +6,10 @@ const TourPackage = require('../models/TourPackage');
 const Booking = require('../models/Booking');
 const Review = require('../models/Review');
 const Inquiry = require('../models/Inquiry');
+const Blog = require('../models/Blog');
+const Gallery = require('../models/Gallery');
+const Testimonial = require('../models/Testimonial');
+const Newsletter = require('../models/Newsletter');
 require('dotenv').config();
 const mongoose = require('mongoose');
 
@@ -25,6 +29,10 @@ const seedData = async () => {
       Booking.deleteMany(),
       Review.deleteMany(),
       Inquiry.deleteMany(),
+      Blog.deleteMany(),
+      Gallery.deleteMany(),
+      Testimonial.deleteMany(),
+      Newsletter.deleteMany(),
     ]);
 
     const hashedPassword = await bcrypt.hash('password123', 10);
@@ -166,6 +174,7 @@ const seedData = async () => {
         rating: 4.8,
         reviewCount: 24,
         isFeatured: true,
+        tourType: 'international',
         createdBy: agent._id,
       },
       {
@@ -192,6 +201,7 @@ const seedData = async () => {
         rating: 4.9,
         reviewCount: 18,
         isFeatured: true,
+        tourType: 'international',
         createdBy: agent._id,
       },
       {
@@ -217,6 +227,7 @@ const seedData = async () => {
         rating: 4.7,
         reviewCount: 31,
         isFeatured: true,
+        tourType: 'international',
         createdBy: agent._id,
       },
       {
@@ -243,6 +254,7 @@ const seedData = async () => {
         rating: 4.6,
         reviewCount: 15,
         isFeatured: false,
+        tourType: 'international',
         createdBy: agent._id,
       },
     ]);
@@ -277,8 +289,55 @@ const seedData = async () => {
       subject: 'Group booking inquiry',
       message: 'I would like to book a group tour for 20 people to Santorini in August.',
       tourPackage: packages[2]._id,
+      inquiryType: 'quote',
       status: 'new',
     });
+
+    await Blog.insertMany([
+      {
+        title: '10 Essential Tips for First-Time International Travelers',
+        slug: 'first-time-international-travel-tips',
+        excerpt: 'Planning your first international trip? Here are expert tips to make your journey smooth and memorable.',
+        content: 'Research your destination thoroughly before departure. Check visa requirements, local customs, and weather conditions.\n\nBook flights and accommodations in advance for better rates. Keep digital and physical copies of important documents.\n\nPurchase travel insurance and inform your bank about international travel. Pack light and leave room for souvenirs.',
+        image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800',
+        category: 'travel-tips',
+        tags: ['tips', 'international', 'planning'],
+      },
+      {
+        title: 'Complete Visa Application Guide for Popular Destinations',
+        slug: 'visa-application-guide',
+        excerpt: 'Step-by-step visa documentation guide for Europe, USA, and Southeast Asia destinations.',
+        content: 'Each country has unique visa requirements. Start your application at least 4-6 weeks before travel.\n\nGather passport, photographs, bank statements, travel itinerary, and hotel confirmations.\n\nOur visa team can review your documents and schedule appointments on your behalf.',
+        image: 'https://images.unsplash.com/photo-1554224311-beee415c201f?w=800',
+        category: 'visa-guide',
+        tags: ['visa', 'documentation'],
+      },
+      {
+        title: 'Best Time to Visit Southeast Asia',
+        slug: 'best-time-southeast-asia',
+        excerpt: 'Discover the ideal seasons for exploring Thailand, Bali, Vietnam, and more.',
+        content: 'November to March offers the best weather across most of Southeast Asia with dry, pleasant conditions.\n\nAvoid monsoon season (June-September) in coastal regions unless you prefer fewer crowds and lower prices.\n\nFestival seasons like Songkran in Thailand offer unique cultural experiences.',
+        image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800',
+        category: 'destination-guide',
+        tags: ['asia', 'seasons'],
+      },
+    ]);
+
+    await Gallery.insertMany([
+      { title: 'Alpine Adventure', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=600', category: 'adventure', caption: 'Swiss Alps trekking', isFeatured: true },
+      { title: 'Tropical Paradise', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600', category: 'destinations', caption: 'Bali rice terraces', isFeatured: true },
+      { title: 'Historic Temple', image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600', category: 'culture', caption: 'Tokyo traditions', isFeatured: true },
+      { title: 'Sunset Coast', image: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=600', category: 'destinations', caption: 'Greek islands', isFeatured: true },
+      { title: 'Luxury Resort', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600', category: 'hotels', caption: 'Beachfront stay', isFeatured: true },
+      { title: 'Wildlife Safari', image: 'https://images.unsplash.com/photo-1516426122078-c23eafaaca0d?w=600', category: 'wildlife', caption: 'Nature expedition', isFeatured: true },
+    ]);
+
+    await Testimonial.insertMany([
+      { name: 'Sarah Mitchell', role: 'Adventure Traveler', location: 'New York', text: 'TravelEase made our Bali trip seamless. The itinerary was perfect and the guides were incredible!', rating: 5, isFeatured: true },
+      { name: 'James Chen', role: 'Family Vacation', location: 'California', text: 'Booked a family package to Switzerland. Kids loved it, and the hotel recommendations were spot on.', rating: 5, isFeatured: true },
+      { name: 'Emily Rodriguez', role: 'Solo Explorer', location: 'Texas', text: 'As a solo traveler, I felt safe and supported throughout. Will definitely book again!', rating: 5, isFeatured: true },
+      { name: 'David Kumar', role: 'Honeymoon Trip', location: 'London', text: 'Our Santorini honeymoon was magical. TravelEase handled every detail from hotels to local tours.', rating: 5, isFeatured: true },
+    ]);
 
     console.log('Database seeded successfully!');
     console.log('\nDemo Accounts (password: password123):');

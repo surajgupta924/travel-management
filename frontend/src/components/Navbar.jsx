@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { FiGlobe, FiMenu, FiX } from 'react-icons/fi';
+import { FiGlobe, FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import GlobalSearch from './GlobalSearch';
 import ThemeToggle from './ThemeToggle';
@@ -11,6 +11,7 @@ const Navbar = () => {
   const { user } = useAuth();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path ? 'active' : '';
 
   return (
-    <nav className={`navbar navbar-pro ${scrolled ? 'scrolled' : ''}`}>
+    <nav className={`navbar navbar-pro agency-navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="container navbar-inner">
         <Link to="/" className="navbar-brand">
           <span className="brand-icon"><FiGlobe /></span>
@@ -39,11 +40,24 @@ const Navbar = () => {
 
         <ul className={`navbar-nav ${menuOpen ? 'open' : ''}`}>
           <li><Link to="/" className={`nav-link ${isActive('/')}`} onClick={() => setMenuOpen(false)}>Home</Link></li>
-          <li><Link to="/packages" className={`nav-link ${isActive('/packages')}`} onClick={() => setMenuOpen(false)}>Packages</Link></li>
+          <li className="nav-dropdown">
+            <button type="button" className={`nav-link nav-dropdown-btn ${location.pathname.startsWith('/services') || location.pathname.startsWith('/packages') ? 'active' : ''}`} onClick={() => setServicesOpen(!servicesOpen)}>
+              Tours <FiChevronDown />
+            </button>
+            {servicesOpen && (
+              <div className="nav-dropdown-menu">
+                <Link to="/packages" onClick={() => { setMenuOpen(false); setServicesOpen(false); }}>All Packages</Link>
+                <Link to="/packages?tourType=domestic" onClick={() => { setMenuOpen(false); setServicesOpen(false); }}>Domestic Tours</Link>
+                <Link to="/packages?tourType=international" onClick={() => { setMenuOpen(false); setServicesOpen(false); }}>International Tours</Link>
+                <Link to="/services" onClick={() => { setMenuOpen(false); setServicesOpen(false); }}>All Services</Link>
+              </div>
+            )}
+          </li>
           <li><Link to="/destinations" className={`nav-link ${isActive('/destinations')}`} onClick={() => setMenuOpen(false)}>Destinations</Link></li>
           <li><Link to="/hotels" className={`nav-link ${isActive('/hotels')}`} onClick={() => setMenuOpen(false)}>Hotels</Link></li>
-          <li><Link to="/wishlist" className={`nav-link ${isActive('/wishlist')}`} onClick={() => setMenuOpen(false)}>Wishlist</Link></li>
-          <li><Link to="/compare" className={`nav-link ${isActive('/compare')}`} onClick={() => setMenuOpen(false)}>Compare</Link></li>
+          <li><Link to="/about" className={`nav-link ${isActive('/about')}`} onClick={() => setMenuOpen(false)}>About</Link></li>
+          <li><Link to="/blog" className={`nav-link ${isActive('/blog')}`} onClick={() => setMenuOpen(false)}>Blog</Link></li>
+          <li><Link to="/gallery" className={`nav-link ${isActive('/gallery')}`} onClick={() => setMenuOpen(false)}>Gallery</Link></li>
           <li><Link to="/contact" className={`nav-link ${isActive('/contact')}`} onClick={() => setMenuOpen(false)}>Contact</Link></li>
         </ul>
 

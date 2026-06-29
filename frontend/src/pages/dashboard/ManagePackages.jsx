@@ -6,7 +6,7 @@ import Loading from '../../components/Loading';
 
 const emptyForm = {
   title: '', destination: '', description: '', duration: 7, price: 0,
-  maxGroupSize: 20, difficulty: 'easy', category: 'cultural',
+  maxGroupSize: 20, difficulty: 'easy', category: 'cultural', tourType: 'international',
   inclusions: '', exclusions: '', images: '', isFeatured: false,
 };
 
@@ -139,6 +139,14 @@ const ManagePackages = () => {
                     <option value="wildlife">Wildlife</option>
                     <option value="luxury">Luxury</option>
                     <option value="budget">Budget</option>
+                    <option value="honeymoon">Honeymoon</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Tour Type</label>
+                  <select className="form-control" value={form.tourType || 'international'} onChange={(e) => setForm({ ...form, tourType: e.target.value })}>
+                    <option value="domestic">Domestic</option>
+                    <option value="international">International</option>
                   </select>
                 </div>
               </div>

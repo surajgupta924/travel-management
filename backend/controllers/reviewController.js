@@ -13,8 +13,8 @@ const updatePackageRating = async (packageId) => {
 
 exports.getReviews = async (req, res) => {
   try {
-    const { tourPackage } = req.query;
-    const filter = { isApproved: true };
+    const { tourPackage, all } = req.query;
+    const filter = all === 'true' ? {} : { isApproved: true };
     if (tourPackage) filter.tourPackage = tourPackage;
 
     const reviews = await Review.find(filter)
@@ -59,6 +59,23 @@ exports.deleteReview = async (req, res) => {
     await review.deleteOne();
     await updatePackageRating(packageId);
     res.json({ success: true, message: 'Review deleted' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.approveReview = async (req, res) => {
+  try {
+    const review = await Review.findByIdAndUpdate(
+      req.params.id,
+      { isApproved: true },
+      { new: true }
+    ).populate('user', 'name avatar').populate('tourPackage', 'title');
+    if (!review) {
+      return res.status(404).json({ success: false, message: 'Review not found' });
+    }
+    await updatePackageRating(review.tourPackage._id || review.tourPackage);
+    res.json({ success: true, data: review });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

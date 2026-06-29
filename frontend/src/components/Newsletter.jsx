@@ -1,42 +1,42 @@
 import { useState } from 'react';
-import { FiMail } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import API from '../services/api';
 import toast from 'react-hot-toast';
+import { getErrorMessage } from '../utils/getErrorMessage';
 
 const Newsletter = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email) return;
-    const subs = JSON.parse(localStorage.getItem('newsletter') || '[]');
-    if (!subs.includes(email)) {
-      localStorage.setItem('newsletter', JSON.stringify([...subs, email]));
+    if (!email.trim()) return;
+    setLoading(true);
+    try {
+      await API.post('/newsletter/subscribe', { email });
+      toast.success('Subscribed! Check your inbox for travel deals.');
+      setEmail('');
+    } catch (err) {
+      toast.error(getErrorMessage(err, 'Subscription failed'));
+    } finally {
+      setLoading(false);
     }
-    toast.success('Subscribed! You will receive travel deals and tips.');
-    setEmail('');
   };
 
   return (
-    <section className="newsletter-section">
+    <section className="section newsletter-section">
       <div className="container">
-        <div className="newsletter-box">
-          <div className="newsletter-content">
-            <FiMail className="newsletter-icon" />
-            <div>
-              <h2>Get Exclusive Travel Deals</h2>
-              <p>Subscribe to our newsletter for weekly offers, destination guides, and travel inspiration.</p>
-            </div>
+        <div className="newsletter-box agency-newsletter">
+          <div className="newsletter-text">
+            <span className="section-tag">Newsletter</span>
+            <h2>Get Exclusive Travel Deals</h2>
+            <p>Subscribe for early access to new packages, seasonal offers, and travel tips from our experts.</p>
           </div>
           <form className="newsletter-form" onSubmit={handleSubmit}>
-            <input
-              type="email"
-              className="form-control"
-              placeholder="Enter your email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <button type="submit" className="btn btn-primary btn-lg">Subscribe</button>
+            <input type="email" placeholder="Enter your email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <button type="submit" className="btn btn-primary btn-lg" disabled={loading}>
+              {loading ? 'Subscribing...' : 'Subscribe'}
+            </button>
           </form>
         </div>
       </div>

@@ -37,6 +37,7 @@ const Packages = () => {
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
     category: searchParams.get('category') || '',
+    tourType: searchParams.get('tourType') || '',
     difficulty: '',
     minPrice: '',
     maxPrice: '',
@@ -78,7 +79,7 @@ const Packages = () => {
         <div className="page-hero page-hero-large">
           <div className="container">
             <span className="section-tag">Tours</span>
-            <h1>Tour Packages</h1>
+            <h1>{filters.tourType === 'domestic' ? 'Domestic Tour Packages' : filters.tourType === 'international' ? 'International Tour Packages' : 'Tour Packages'}</h1>
             <p>Find your perfect adventure from our curated collection of world-class travel experiences</p>
           </div>
         </div>
@@ -110,7 +111,12 @@ const Packages = () => {
             <div className="filters-panel-header"><FiSliders /> Filters</div>
             <div className="filters filters-expanded">
               <input className="form-control" placeholder="Search packages..." value={filters.search} onChange={(e) => handleFilter('search', e.target.value)} />
-              <select className="form-control" value={filters.category} onChange={(e) => handleFilter('category', e.target.value)}>
+              <select className="form-control" value={filters.tourType} onChange={(e) => handleFilter('tourType', e.target.value)}>
+              <option value="">All Tour Types</option>
+              <option value="domestic">Domestic</option>
+              <option value="international">International</option>
+            </select>
+            <select className="form-control" value={filters.category} onChange={(e) => handleFilter('category', e.target.value)}>
                 <option value="">All Categories</option>
                 {categories.map((c) => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
               </select>
