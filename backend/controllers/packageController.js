@@ -1,9 +1,11 @@
 const TourPackage = require('../models/TourPackage');
 const Review = require('../models/Review');
+const { paginate, paginatedResponse } = require('../utils/paginate');
 
 exports.getPackages = async (req, res) => {
   try {
-    const { destination, category, minPrice, maxPrice, featured, search, difficulty } = req.query;
+    const { destination, category, minPrice, maxPrice, featured, search, difficulty, sort } = req.query;
+    const { page, limit, skip } = paginate(req.query.page, req.query.limit);
     const filter = { isActive: true };
     if (destination) filter.destination = destination;
     if (category) filter.category = category;
@@ -20,11 +22,24 @@ exports.getPackages = async (req, res) => {
         { description: { $regex: search, $options: 'i' } },
       ];
     }
-    const packages = await TourPackage.find(filter)
-      .populate('destination', 'name city country image')
-      .populate('hotel', 'name starRating pricePerNight')
-      .sort('-isFeatured -rating');
-    res.json({ success: true, count: packages.length, data: packages });
+
+    let sortOption = { isFeatured: -1, rating: -1 };
+    if (sort === 'price-asc') sortOption = { price: 1 };
+    if (sort === 'price-desc') sortOption = { price: -1 };
+    if (sort === 'rating') sortOption = { rating: -1 };
+    if (sort === 'duration') sortOption = { duration: 1 };
+
+    const [packages, total] = await Promise.all([
+      TourPackage.find(filter)
+        .populate('destination', 'name city country image')
+        .populate('hotel', 'name starRating pricePerNight')
+        .sort(sortOption)
+        .skip(skip)
+        .limit(limit),
+      TourPackage.countDocuments(filter),
+    ]);
+
+    res.json({ ...paginatedResponse(packages, total, page, limit), count: packages.length });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

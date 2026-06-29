@@ -10,6 +10,7 @@ import Testimonials from '../components/Testimonials';
 import Newsletter from '../components/Newsletter';
 import FAQ from '../components/FAQ';
 import Loading from '../components/Loading';
+import PageWrapper from '../components/PageWrapper';
 
 const categories = [
   { label: 'Adventure', value: 'adventure', icon: '🏔️' },
@@ -32,6 +33,7 @@ const Home = () => {
   const [destinations, setDestinations] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [allPackages, setAllPackages] = useState([]);
+  const [publicStats, setPublicStats] = useState(null);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -41,13 +43,15 @@ const Home = () => {
       API.get('/packages?featured=true'),
       API.get('/destinations?popular=true'),
       API.get('/hotels'),
-      API.get('/packages'),
+      API.get('/packages?limit=6'),
+      API.get('/public/stats'),
     ])
-      .then(([pkgRes, destRes, hotelRes, allRes]) => {
+      .then(([pkgRes, destRes, hotelRes, allRes, statsRes]) => {
         setFeatured(pkgRes.data.data);
         setDestinations(destRes.data.data);
         setHotels(hotelRes.data.data.slice(0, 3));
         setAllPackages(allRes.data.data.slice(0, 6));
+        setPublicStats(statsRes.data.data);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -61,6 +65,7 @@ const Home = () => {
   if (loading) return <Loading message="Discovering amazing destinations..." />;
 
   return (
+    <PageWrapper>
     <>
       <section className="hero hero-large">
         <div className="container">
@@ -72,10 +77,10 @@ const Home = () => {
             <button type="submit" className="btn btn-primary btn-lg"><FiSearch /> Search Trips</button>
           </form>
           <div className="hero-stats">
-            <div><strong>50+</strong><span>Destinations</span></div>
-            <div><strong>100+</strong><span>Tour Packages</span></div>
-            <div><strong>10k+</strong><span>Happy Travelers</span></div>
-            <div><strong>4.8★</strong><span>Average Rating</span></div>
+            <div><strong>{publicStats?.destinations || '50'}+</strong><span>Destinations</span></div>
+            <div><strong>{publicStats?.packages || '100'}+</strong><span>Tour Packages</span></div>
+            <div><strong>{publicStats?.travelers ? `${(publicStats.travelers / 1000).toFixed(0)}k+` : '10k+'}</strong><span>Happy Travelers</span></div>
+            <div><strong>{publicStats?.avgRating || '4.8'}★</strong><span>Average Rating</span></div>
           </div>
         </div>
       </section>
@@ -193,6 +198,7 @@ const Home = () => {
         </div>
       </div>
     </>
+    </PageWrapper>
   );
 };
 

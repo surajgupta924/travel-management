@@ -9,6 +9,9 @@ import PackageCard from '../components/PackageCard';
 import FAQ from '../components/FAQ';
 import Loading from '../components/Loading';
 import EmptyState from '../components/EmptyState';
+import BookingWizard from '../components/BookingWizard';
+import CompareButton from '../components/CompareButton';
+import PageWrapper from '../components/PageWrapper';
 
 const packageFaq = [
   { q: 'What is the cancellation policy?', a: 'You can cancel from My Bookings. Cancellations 30+ days before travel receive full refund; 15–30 days receive 50%.' },
@@ -23,9 +26,8 @@ const PackageDetail = () => {
   const [data, setData] = useState(null);
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [booking, setBooking] = useState({ travelDate: '', numberOfTravelers: 1, specialRequests: '' });
+  const [showWizard, setShowWizard] = useState(false);
   const [reviewForm, setReviewForm] = useState({ rating: 5, title: '', comment: '' });
-  const [submitting, setSubmitting] = useState(false);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [mainImage, setMainImage] = useState(0);
 
@@ -45,23 +47,13 @@ const PackageDetail = () => {
 
   useEffect(() => { fetchPackage(); }, [id]);
 
-  const handleBooking = async (e) => {
-    e.preventDefault();
+  const handleBookClick = () => {
     if (!user) {
       toast.error('Please login to book');
       navigate('/login');
       return;
     }
-    setSubmitting(true);
-    try {
-      const res = await API.post('/bookings', { tourPackage: id, ...booking });
-      toast.success(`Booking created! Reference: ${res.data.data.bookingReference}`);
-      navigate('/bookings');
-    } catch (err) {
-      toast.error(getErrorMessage(err, 'Booking failed'));
-    } finally {
-      setSubmitting(false);
-    }
+    setShowWizard(true);
   };
 
   const handleReview = async (e) => {
@@ -96,6 +88,7 @@ const PackageDetail = () => {
   const images = pkg.images?.length ? pkg.images : [pkg.destination?.image];
 
   return (
+    <PageWrapper>
     <>
       <div className="detail-hero detail-hero-large">
         <img src={images[mainImage]} alt={pkg.title} />
@@ -237,27 +230,17 @@ const PackageDetail = () => {
           <div className="card booking-card">
             <div className="price">${pkg.price}</div>
             <div className="per-person">per person · {pkg.duration} days</div>
-            <form onSubmit={handleBooking}>
-              <div className="form-group">
-                <label>Travel Date</label>
-                <input type="date" className="form-control" required min={new Date().toISOString().split('T')[0]} value={booking.travelDate} onChange={(e) => setBooking({ ...booking, travelDate: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Number of Travelers</label>
-                <input type="number" className="form-control" min={1} max={pkg.maxGroupSize} required value={booking.numberOfTravelers} onChange={(e) => setBooking({ ...booking, numberOfTravelers: Number(e.target.value) })} />
-              </div>
-              <div className="form-group">
-                <label>Special Requests</label>
-                <textarea className="form-control" rows={3} value={booking.specialRequests} onChange={(e) => setBooking({ ...booking, specialRequests: e.target.value })} placeholder="Dietary needs, accessibility..." />
-              </div>
-              <div className="booking-total">
-                <span>Total Amount</span>
-                <strong>${pkg.price * booking.numberOfTravelers}</strong>
-              </div>
-              <button type="submit" className="btn btn-primary btn-lg auth-submit" disabled={submitting}>
-                {submitting ? 'Booking...' : 'Book Now'}
-              </button>
-            </form>
+            <div className="booking-total" style={{ marginBottom: 16 }}>
+              <span>Starting from</span>
+              <strong>${pkg.price}</strong>
+            </div>
+            <button type="button" className="btn btn-primary btn-lg auth-submit" onClick={handleBookClick}>
+              Book Now
+            </button>
+            <div className="sidebar-actions" style={{ marginTop: 12, display: 'flex', gap: 8 }}>
+              <CompareButton pkg={pkg} size="md" />
+              <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={handleShare}><FiShare2 /> Share</button>
+            </div>
             <p className="booking-note">* Free cancellation up to 30 days before travel</p>
           </div>
 
@@ -282,7 +265,15 @@ const PackageDetail = () => {
           </div>
         </section>
       )}
+      {showWizard && (
+        <BookingWizard
+          pkg={pkg}
+          onClose={() => setShowWizard(false)}
+          onSuccess={() => navigate('/bookings')}
+        />
+      )}
     </>
+    </PageWrapper>
   );
 };
 

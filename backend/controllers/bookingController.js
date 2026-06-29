@@ -1,5 +1,6 @@
 const Booking = require('../models/Booking');
 const TourPackage = require('../models/TourPackage');
+const createNotification = require('../utils/createNotification');
 
 exports.getBookings = async (req, res) => {
   try {
@@ -79,6 +80,14 @@ exports.createBooking = async (req, res) => {
         populate: { path: 'destination', select: 'name city country' },
       });
 
+    await createNotification({
+      userId: req.user._id,
+      title: 'Booking Created',
+      message: `Your booking ${booking.bookingReference} is pending confirmation.`,
+      type: 'booking',
+      link: '/bookings',
+    });
+
     res.status(201).json({ success: true, data: populated });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -125,6 +134,60 @@ exports.cancelBooking = async (req, res) => {
     await booking.save();
 
     res.json({ success: true, data: booking, message: 'Booking cancelled' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.processPayment = async (req, res) => {
+  try {
+    const { paymentMethod = 'card' } = req.body;
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    if (booking.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'Not authorized' });
+    }
+
+    if (booking.paymentStatus === 'paid') {
+      return res.status(400).json({ success: false, message: 'Already paid' });
+    }
+
+    if (booking.status === 'cancelled') {
+      return res.status(400).json({ success: false, message: 'Cannot pay for cancelled booking' });
+    }
+
+    booking.paymentStatus = 'paid';
+    booking.status = 'confirmed';
+    booking.notes = booking.notes
+      ? `${booking.notes}\nPaid via ${paymentMethod}`
+      : `Paid via ${paymentMethod}`;
+    await booking.save();
+
+    await createNotification({
+      userId: req.user._id,
+      title: 'Payment Successful',
+      message: `Payment of $${booking.totalAmount} confirmed for ${booking.bookingReference}.`,
+      type: 'payment',
+      link: '/bookings',
+    });
+
+    const populated = await Booking.findById(booking._id)
+      .populate('user', 'name email')
+      .populate({
+        path: 'tourPackage',
+        populate: { path: 'destination', select: 'name city country image' },
+      });
+
+    res.json({
+      success: true,
+      data: populated,
+      message: 'Payment processed successfully',
+      transactionId: `TXN-${Date.now().toString(36).toUpperCase()}`,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

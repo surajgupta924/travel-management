@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
-import { FiUsers, FiPackage, FiCalendar, FiDollarSign } from 'react-icons/fi';
+import { FiUsers, FiPackage, FiCalendar, FiDollarSign, FiInbox } from 'react-icons/fi';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import API from '../../services/api';
 import Loading from '../../components/Loading';
+
+const STATUS_COLORS = { pending: '#f59e0b', confirmed: '#10b981', cancelled: '#ef4444', completed: '#2563eb' };
 
 const DashboardHome = () => {
   const [data, setData] = useState(null);
@@ -14,7 +17,21 @@ const DashboardHome = () => {
   }, []);
 
   if (loading) return <Loading />;
-  const { stats, recentBookings, topPackages } = data;
+  const { stats, recentBookings, topPackages, bookingsByStatus } = data;
+
+  const pieData = bookingsByStatus?.map((b) => ({
+    name: b._id.charAt(0).toUpperCase() + b._id.slice(1),
+    value: b.count,
+    color: STATUS_COLORS[b._id] || '#64748b',
+  })) || [];
+
+  const barData = [
+    { name: 'Users', value: stats.totalUsers },
+    { name: 'Packages', value: stats.totalPackages },
+    { name: 'Bookings', value: stats.totalBookings },
+    { name: 'Hotels', value: stats.totalHotels },
+    { name: 'Destinations', value: stats.totalDestinations },
+  ];
 
   return (
     <>
@@ -39,6 +56,43 @@ const DashboardHome = () => {
         <div className="card stat-card">
           <div className="stat-icon purple"><FiDollarSign /></div>
           <div className="stat-info"><h3>${stats.totalRevenue.toLocaleString()}</h3><p>Revenue</p></div>
+        </div>
+        <div className="card stat-card">
+          <div className="stat-icon orange"><FiInbox /></div>
+          <div className="stat-info"><h3>{stats.newInquiries}</h3><p>New Inquiries</p></div>
+        </div>
+      </div>
+
+      <div className="grid-2 dashboard-charts">
+        <div className="card">
+          <div className="card-body">
+            <h3 style={{ marginBottom: 16 }}>Bookings by Status</h3>
+            {pieData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <PieChart>
+                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={90} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                    {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : <p className="muted">No booking data yet</p>}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-body">
+            <h3 style={{ marginBottom: 16 }}>Platform Overview</h3>
+            <ResponsiveContainer width="100%" height={260}>
+              <BarChart data={barData}>
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#2563eb" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 

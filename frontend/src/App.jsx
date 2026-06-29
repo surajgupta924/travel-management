@@ -1,8 +1,12 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { CompareProvider } from './context/CompareContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import CompareBar from './components/CompareBar';
+import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Packages from './pages/Packages';
@@ -15,6 +19,8 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Bookings from './pages/Bookings';
 import Contact from './pages/Contact';
+import Wishlist from './pages/Wishlist';
+import Compare from './pages/Compare';
 import DashboardLayout from './pages/dashboard/DashboardLayout';
 import DashboardHome from './pages/dashboard/DashboardHome';
 import ManagePackages from './pages/dashboard/ManagePackages';
@@ -34,6 +40,7 @@ const PublicLayout = ({ children }) => {
     <>
       <Navbar />
       {children}
+      <CompareBar />
       <Footer />
     </>
   );
@@ -41,44 +48,51 @@ const PublicLayout = ({ children }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Toaster position="top-right" />
-        <Routes>
-          <Route path="/dashboard/*" element={
-            <ProtectedRoute staffOnly>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<DashboardHome />} />
-            <Route path="packages" element={<ManagePackages />} />
-            <Route path="destinations" element={<ManageDestinations />} />
-            <Route path="hotels" element={<ManageHotels />} />
-            <Route path="bookings" element={<ManageBookings />} />
-            <Route path="inquiries" element={<ManageInquiries />} />
-            <Route path="users" element={<ManageUsers />} />
-          </Route>
+    <ThemeProvider>
+      <AuthProvider>
+        <CompareProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <Toaster position="top-right" />
+            <Routes>
+              <Route path="/dashboard/*" element={
+                <ProtectedRoute staffOnly>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              }>
+                <Route index element={<DashboardHome />} />
+                <Route path="packages" element={<ManagePackages />} />
+                <Route path="destinations" element={<ManageDestinations />} />
+                <Route path="hotels" element={<ManageHotels />} />
+                <Route path="bookings" element={<ManageBookings />} />
+                <Route path="inquiries" element={<ManageInquiries />} />
+                <Route path="users" element={<ManageUsers />} />
+              </Route>
 
-          <Route path="*" element={
-            <PublicLayout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/packages" element={<Packages />} />
-                <Route path="/packages/:id" element={<PackageDetail />} />
-                <Route path="/destinations" element={<Destinations />} />
-                <Route path="/destinations/:id" element={<DestinationDetail />} />
-                <Route path="/hotels" element={<Hotels />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
-              </Routes>
-            </PublicLayout>
-          } />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+              <Route path="*" element={
+                <PublicLayout>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/packages" element={<Packages />} />
+                    <Route path="/packages/:id" element={<PackageDetail />} />
+                    <Route path="/destinations" element={<Destinations />} />
+                    <Route path="/destinations/:id" element={<DestinationDetail />} />
+                    <Route path="/hotels" element={<Hotels />} />
+                    <Route path="/wishlist" element={<Wishlist />} />
+                    <Route path="/compare" element={<Compare />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                    <Route path="/bookings" element={<ProtectedRoute><Bookings /></ProtectedRoute>} />
+                  </Routes>
+                </PublicLayout>
+              } />
+            </Routes>
+          </BrowserRouter>
+        </CompareProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

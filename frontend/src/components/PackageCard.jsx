@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { FiClock, FiMapPin, FiStar, FiUsers } from 'react-icons/fi';
 import WishlistButton from './WishlistButton';
+import CompareButton from './CompareButton';
 
 const PackageCard = ({ pkg, listView = false }) => {
   const image = pkg.images?.[0] || pkg.destination?.image || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800';
@@ -10,7 +11,10 @@ const PackageCard = ({ pkg, listView = false }) => {
       <Link to={`/packages/${pkg._id}`} className="card package-list-card">
         <div className="package-list-image">
           <img src={image} alt={pkg.title} loading="lazy" />
-          <WishlistButton packageId={pkg._id} />
+          <div className="card-action-btns">
+            <WishlistButton packageId={pkg._id} />
+            <CompareButton pkg={pkg} />
+          </div>
         </div>
         <div className="package-list-body">
           <div className="package-list-top">
@@ -38,7 +42,10 @@ const PackageCard = ({ pkg, listView = false }) => {
     <Link to={`/packages/${pkg._id}`} className="card package-card">
       <div className="card-image">
         <img src={image} alt={pkg.title} loading="lazy" />
-        <WishlistButton packageId={pkg._id} />
+        <div className="card-action-btns">
+          <WishlistButton packageId={pkg._id} />
+          <CompareButton pkg={pkg} />
+        </div>
         {pkg.isFeatured && <span className="featured-badge">Featured</span>}
         <span className="price-tag">${pkg.price}</span>
       </div>

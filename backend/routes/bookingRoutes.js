@@ -8,5 +8,6 @@ router.get('/:id', protect, bookingController.getBooking);
 router.post('/', protect, bookingController.createBooking);
 router.put('/:id', protect, authorize('admin', 'agent'), bookingController.updateBooking);
 router.put('/:id/cancel', protect, bookingController.cancelBooking);
+router.post('/:id/pay', protect, bookingController.processPayment);
 
 module.exports = router;
